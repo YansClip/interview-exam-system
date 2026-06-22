@@ -1,0 +1,18 @@
+{
+  "name": "interview-exam-system",
+  "version": "1.0.0",
+  "description": "面试答题系统：轻量在线候选人测评与后台管理工具",
+  "scripts": {
+    "start": "node server.js",
+    "build:particles": "esbuild particles.js --bundle --format=esm --outfile=vendor/particles.bundle.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "mammoth": "^1.12.0",
+    "ogl": "^1.0.11",
+    "pdf-parse": "^2.4.5",
+    "pdfkit": "^0.19.1"
+  }
+}

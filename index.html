@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="zh-CN" data-auth-theme="light" data-site-lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          document.documentElement.dataset.authTheme =
+            localStorage.getItem("exam_system_theme") === "dark" ? "dark" : "light";
+          document.documentElement.dataset.siteLang =
+            localStorage.getItem("exam_system_lang") === "en" ? "en" : "zh";
+          document.documentElement.lang =
+            document.documentElement.dataset.siteLang === "en" ? "en" : "zh-CN";
+        } catch (error) {
+          document.documentElement.dataset.authTheme = "light";
+          document.documentElement.dataset.siteLang = "zh";
+        }
+      })();
+    </script>
+    <title>大模型工程师</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="antiCheatBanner" class="anti-cheat-banner" hidden aria-live="polite"></div>
+    <div class="exam-app exam-shell">
+      <header class="topbar">
+        <div class="brand">
+          <div>
+            <h1 id="examTitle">大模型工程师</h1>
+            <p id="examTimeLimit" data-i18n="exam.timeLimit">答题时间：40min</p>
+          </div>
+        </div>
+        <div id="countdownTimer" class="countdown-timer">剩余时间 40:00</div>
+        <div class="top-actions">
+          <button id="langToggle" class="lang-toggle" type="button" aria-label="切换到英文" title="切换到英文">
+            <span class="lang-toggle-label" aria-hidden="true">EN</span>
+          </button>
+          <button id="authThemeToggle" class="theme-toggle" type="button" aria-label="切换到暗色模式" title="切换到暗色模式">
+            <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+              <path fill="currentColor" d="M13.5 2.1a8.5 8.5 0 1 0 7.4 7.4 6.4 6.4 0 1 1-7.4-7.4Z" />
+            </svg>
+            <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.75" fill="currentColor" />
+              <path
+                stroke="currentColor"
+                stroke-width="2.25"
+                stroke-linecap="round"
+                d="M12 3v2.6M12 18.4V21M5.05 5.05l1.84 1.84M17.11 17.11l1.84 1.84M3 12h2.6M18.4 12H21M5.05 18.95l1.84-1.84M17.11 6.89l1.84-1.84"
+              />
+            </svg>
+          </button>
+          <span id="loginStatus" class="status-pill" data-i18n="exam.recording">作答自动记录</span>
+          <button id="logoutButton" class="logout-icon-button" type="button" data-i18n-aria="exam.logout" data-i18n-title="exam.logout" aria-label="退出登录" title="退出登录">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+          <button id="topSubmitButton" type="button" data-i18n="exam.submit">提交试卷</button>
+        </div>
+      </header>
+
+      <div class="workspace">
+        <aside class="sidebar">
+          <div class="sidebar-head">
+            <strong data-i18n="exam.overview">题目总览</strong>
+            <span data-i18n="exam.answeredRatio">作答 / 题数</span>
+          </div>
+
+          <div id="categoryList" class="category-list"></div>
+
+          <section class="candidate-card">
+            <h2 data-i18n="exam.candidateInfo">考生信息</h2>
+            <label>
+              <span data-i18n="exam.name">姓名</span>
+              <input id="candidateName" type="text" data-i18n-placeholder="exam.namePlaceholder" placeholder="请填写姓名" autocomplete="name" />
+            </label>
+            <input id="candidateContact" type="hidden" />
+            <label>
+              <span data-i18n="exam.role">应聘岗位</span>
+              <input id="candidateRole" class="locked-input" type="text" value="大模型工程师" readonly tabindex="-1" aria-readonly="true" />
+            </label>
+          </section>
+
+          <div class="map-head">
+            <strong data-i18n="exam.questionNo">题号</strong>
+          </div>
+          <div id="questionMap" class="question-map"></div>
+
+          <div id="sidebarFooter" class="sidebar-footer"></div>
+        </aside>
+
+        <main class="content" id="mainContent">
+          <div class="problem-toolbar">
+            <button id="prevButton" class="text-button" type="button" data-i18n="exam.prev">‹ 上一题</button>
+            <button id="nextButton" class="text-button" type="button" data-i18n="exam.next">下一题 ›</button>
+          </div>
+
+          <section class="problem-stage" id="problemStage">
+            <div class="section-strip" id="sectionStrip" data-i18n="exam.sectionDesc">题目描述</div>
+            <div id="problemContent" class="problem-content"></div>
+          </section>
+        </main>
+      </div>
+
+      <footer class="bottom-bar">
+        <span data-i18n="exam.footer.noRecord">无提交记录</span>
+        <span data-i18n="exam.footer.noLimit">无答题权限限制</span>
+        <button id="bottomSubmitButton" type="button" data-i18n="exam.submit">提交试卷</button>
+      </footer>
+
+    </div>
+
+    <script src="./i18n.js"></script>
+    <script src="./theme.js"></script>
+    <script src="./anti-cheat.js"></script>
+    <script src="./code-editor.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

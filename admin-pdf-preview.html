@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>答题系统 · PDF 导出样式预览</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <style>
+      body {
+        margin: 0;
+        background: #e8eaed;
+        padding: 24px 16px 48px;
+      }
+      .pdf-preview-toolbar {
+        max-width: 794px;
+        margin: 0 auto 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+      }
+      .pdf-preview-toolbar h1 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .pdf-preview-note {
+        max-width: 794px;
+        margin: 0 auto 16px;
+        padding: 12px 14px;
+        border-radius: 8px;
+        background: #fff7e6;
+        color: #8a5b00;
+        font-size: 13px;
+      }
+      .pdf-page {
+        box-sizing: border-box;
+        width: 794px;
+        min-height: 1123px;
+        margin: 0 auto 24px;
+        padding: 68px 51px 56px;
+        background: #ffffff;
+        color: #111111;
+        font: 14px/1.45 "PingFang SC", "Microsoft YaHei", sans-serif;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+        position: relative;
+      }
+      .pdf-page-header,
+      .pdf-page-footer {
+        position: absolute;
+        left: 51px;
+        right: 51px;
+        color: #888888;
+        font-size: 12px;
+      }
+      .pdf-page-header {
+        top: 28px;
+        text-align: right;
+      }
+      .pdf-page-footer {
+        bottom: 28px;
+        text-align: center;
+      }
+      .pdf-cover-title {
+        margin: 0 0 8px;
+        font-size: 27px;
+        line-height: 1.25;
+      }
+      .pdf-cover-meta {
+        margin: 0 0 20px;
+        color: #666666;
+        font-size: 12px;
+      }
+      .pdf-cover-grid {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 16px;
+        align-items: start;
+      }
+      .pdf-info-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+      .pdf-info-table td {
+        padding: 3px 0;
+        vertical-align: top;
+      }
+      .pdf-info-table td:first-child {
+        width: 72px;
+        color: #666666;
+      }
+      .pdf-score-big {
+        text-align: right;
+      }
+      .pdf-score-big strong {
+        display: block;
+        font-size: 27px;
+        line-height: 1.1;
+      }
+      .pdf-score-big span {
+        color: #666666;
+        font-size: 12px;
+      }
+      .pdf-section-title {
+        margin: 24px 0 12px;
+        padding-top: 4px;
+        border-top: 1px solid #e5e7eb;
+        font-size: 17px;
+        font-weight: 700;
+      }
+      .pdf-section-title:first-of-type {
+        margin-top: 0;
+        border-top: 0;
+        padding-top: 0;
+      }
+      .pdf-summary-cards {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+      }
+      .pdf-summary-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 10px 12px;
+      }
+      .pdf-summary-card label {
+        display: block;
+        color: #666666;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .pdf-summary-card strong {
+        font-size: 16px;
+      }
+      .pdf-testcase {
+        margin-top: 10px;
+        padding: 10px 12px;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        background: #fafafa;
+        font-size: 12px;
+      }
+      .pdf-testcase h4 {
+        margin: 0 0 8px;
+        font-size: 13px;
+      }
+      .pdf-testcase p {
+        margin: 4px 0;
+        color: #666666;
+      }
+      .pdf-testcase pre {
+        margin: 2px 0 8px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font: 11px/1.4 Menlo, Consolas, monospace;
+        color: #111111;
+      }
+      .pdf-code-block {
+        margin-top: 8px;
+        padding: 12px;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+        background: #f8f8f8;
+        white-space: pre-wrap;
+        word-break: break-word;
+        font: 11px/1.45 Menlo, Consolas, monospace;
+        max-height: 220px;
+        overflow: auto;
+      }
+      .pdf-objective-table {
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
+        font-size: 11px;
+      }
+      .pdf-objective-table th,
+      .pdf-objective-table td {
+        border: 1px solid #dddddd;
+        padding: 6px;
+        vertical-align: top;
+        word-break: break-word;
+      }
+      .pdf-objective-table th {
+        background: #f5f5f5;
+        text-align: left;
+      }
+      .col-no { width: 8%; }
+      .col-title { width: 28%; }
+      .col-ans { width: 18%; }
+      .col-exp { width: 18%; }
+      .col-score { width: 14%; }
+      .col-judge { width: 14%; }
+    </style>
+  </head>
+  <body>
+    <div class="pdf-preview-toolbar">
+      <h1>PDF 导出样式预览（阶段 A）</h1>
+      <a class="ghost small-button" href="./admin.html">返回后台</a>
+    </div>
+    <p class="pdf-preview-note">
+      本页用于确认正式 PDF 的排版样式。确认后，服务端将按此结构用 pdfkit 生成 PDF（不再使用 html2canvas）。
+    </p>
+
+    <article class="pdf-page">
+      <div class="pdf-page-header">答题系统 · 试卷详情</div>
+      <div class="pdf-page-footer">第 1 / 2 页</div>
+
+      <h2 class="pdf-cover-title">试卷答题详情</h2>
+      <p class="pdf-cover-meta">导出时间：2026/6/18 16:30:00</p>
+
+      <div class="pdf-cover-grid">
+        <table class="pdf-info-table">
+          <tbody>
+            <tr><td>候选人</td><td>张三</td></tr>
+            <tr><td>手机号</td><td>13800138000</td></tr>
+            <tr><td>岗位</td><td>大模型工程师</td></tr>
+            <tr><td>提交时间</td><td>2026/6/18 15:44:16</td></tr>
+            <tr><td>答题用时</td><td>36 分 46 秒</td></tr>
+          </tbody>
+        </table>
+        <div class="pdf-score-big">
+          <strong>84 / 100</strong>
+          <span>总分</span>
+        </div>
+      </div>
+
+      <h3 class="pdf-section-title">成绩摘要</h3>
+      <div class="pdf-summary-cards">
+        <div class="pdf-summary-card"><label>客观题</label><strong>45 / 58</strong></div>
+        <div class="pdf-summary-card"><label>代码题</label><strong>24 / 24</strong></div>
+        <div class="pdf-summary-card"><label>人工复核</label><strong>不需要</strong></div>
+      </div>
+
+      <h3 class="pdf-section-title">代码题</h3>
+      <table class="pdf-info-table">
+        <tbody>
+          <tr><td>选题</td><td>题目 B：一次免费通行</td></tr>
+          <tr><td>语言</td><td>Python</td></tr>
+          <tr><td>复核状态</td><td>通过</td></tr>
+          <tr><td>自动评测</td><td>2 / 2 通过</td></tr>
+          <tr><td>评测时间</td><td>2026/6/18 15:44:16</td></tr>
+        </tbody>
+      </table>
+
+      <div class="pdf-testcase">
+        <h4>样例 1 · 正确</h4>
+        <p>期望：</p>
+        <pre>5</pre>
+        <p>实际：</p>
+        <pre>5</pre>
+      </div>
+      <div class="pdf-testcase">
+        <h4>样例 2 · 正确</h4>
+        <p>期望：</p>
+        <pre>-1</pre>
+        <p>实际：</p>
+        <pre>-1</pre>
+      </div>
+
+      <p style="margin: 14px 0 6px; font-weight: 600;">代码答案</p>
+      <pre class="pdf-code-block">import sys, heapq as h
+
+def d(s, g):
+    D = [10**18] * len(g)
+    ...
+print(-1 if ans > 10**17 else ans)</pre>
+
+      <h3 class="pdf-section-title">客观题明细</h3>
+      <table class="pdf-objective-table">
+        <thead>
+          <tr>
+            <th class="col-no">题号</th>
+            <th class="col-title">题目</th>
+            <th class="col-ans">作答</th>
+            <th class="col-exp">标准答案</th>
+            <th class="col-score">得分</th>
+            <th class="col-judge">判定</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Embedding 模型的主要作用</td>
+            <td>B</td>
+            <td>B</td>
+            <td>4 / 4</td>
+            <td>正确</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>产品知识库建设步骤</td>
+            <td>A, B, C</td>
+            <td>A, B, C, E</td>
+            <td>5 / 6</td>
+            <td>部分得分</td>
+          </tr>
+          <tr>
+            <td>8</td>
+            <td>RAG 故障定位</td>
+            <td>A, E</td>
+            <td>A, B</td>
+            <td>0 / 12</td>
+            <td>错误</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="pdf-page">
+      <div class="pdf-page-header">答题系统 · 试卷详情</div>
+      <div class="pdf-page-footer">第 2 / 2 页</div>
+      <h3 class="pdf-section-title">客观题明细（续）</h3>
+      <table class="pdf-objective-table">
+        <thead>
+          <tr>
+            <th class="col-no">题号</th>
+            <th class="col-title">题目</th>
+            <th class="col-ans">作答</th>
+            <th class="col-exp">标准答案</th>
+            <th class="col-score">得分</th>
+            <th class="col-judge">判定</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>9</td>
+            <td>RAG 标准链路排序</td>
+            <td>A → C → B → D → E → F</td>
+            <td>A → C → B → D → E → F</td>
+            <td>12 / 12</td>
+            <td>正确</td>
+          </tr>
+        </tbody>
+      </table>
+    </article>
+  </body>
+</html>

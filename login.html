@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="zh-CN" data-auth-theme="light" data-site-lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          document.documentElement.dataset.authTheme =
+            localStorage.getItem("exam_system_theme") === "dark" ? "dark" : "light";
+          document.documentElement.dataset.siteLang =
+            localStorage.getItem("exam_system_lang") === "en" ? "en" : "zh";
+          document.documentElement.lang =
+            document.documentElement.dataset.siteLang === "en" ? "en" : "zh-CN";
+        } catch (error) {
+          document.documentElement.dataset.authTheme = "light";
+          document.documentElement.dataset.siteLang = "zh";
+        }
+      })();
+    </script>
+    <title data-i18n-page-title="page.login">登录 · 答题系统</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./particles.css" />
+    <link rel="modulepreload" href="./vendor/particles.bundle.js" />
+  </head>
+  <body class="auth-body">
+    <div id="particlesBackground" class="particles-container" aria-hidden="true"></div>
+    <div class="auth-toolbar">
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="切换到英文" title="切换到英文">
+        <span class="lang-toggle-label" aria-hidden="true">EN</span>
+      </button>
+      <button id="authThemeToggle" class="theme-toggle" type="button" aria-label="切换到暗色模式" title="切换到暗色模式">
+        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M13.5 2.1a8.5 8.5 0 1 0 7.4 7.4 6.4 6.4 0 1 1-7.4-7.4Z" />
+        </svg>
+        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.75" fill="currentColor" />
+          <path
+            stroke="currentColor"
+            stroke-width="2.25"
+            stroke-linecap="round"
+            d="M12 3v2.6M12 18.4V21M5.05 5.05l1.84 1.84M17.11 17.11l1.84 1.84M3 12h2.6M18.4 12H21M5.05 18.95l1.84-1.84M17.11 6.89l1.84-1.84"
+          />
+        </svg>
+      </button>
+    </div>
+    <main class="auth-shell">
+      <section class="auth-card">
+        <p class="auth-kicker" data-i18n="login.kicker">AILAB</p>
+        <h1 data-i18n="login.title">答题系统</h1>
+
+        <form id="loginForm" class="auth-form">
+          <label>
+            <span data-i18n="login.name">姓名</span>
+            <input id="loginName" type="text" data-i18n-placeholder="login.placeholder.name" placeholder="请输入姓名" autocomplete="name" required />
+          </label>
+          <label>
+            <span data-i18n="login.phone">手机号</span>
+            <input id="loginPhone" type="tel" inputmode="numeric" maxlength="11" data-i18n-placeholder="login.placeholder.phone" placeholder="请输入手机号" autocomplete="tel" required />
+          </label>
+          <label id="loginRoleLabel">
+            <span data-i18n="login.role">应聘岗位</span>
+            <select id="loginRole" required>
+              <option value="大模型工程师" data-i18n="job.llm">大模型工程师</option>
+              <option value="游戏策划师" data-i18n="job.game">游戏策划师</option>
+              <option value="全栈工程师" data-i18n="job.fullstack">全栈工程师</option>
+            </select>
+          </label>
+          <p id="loginMessage" class="form-message"></p>
+          <button type="submit" data-i18n="login.start">开始答题</button>
+        </form>
+
+        <div class="auth-links">
+          <button id="adminEntryButton" type="button" data-i18n="login.adminEntry">后台管理</button>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="./particles-init.js"></script>
+    <script src="./i18n.js"></script>
+    <script src="./theme.js"></script>
+    <script src="./auth-select.js"></script>
+    <script src="./login.js"></script>
+  </body>
+</html>

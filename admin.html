@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="zh-CN" data-auth-theme="light" data-site-lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          document.documentElement.dataset.authTheme =
+            localStorage.getItem("exam_system_theme") === "dark" ? "dark" : "light";
+          document.documentElement.dataset.siteLang =
+            localStorage.getItem("exam_system_lang") === "en" ? "en" : "zh";
+          document.documentElement.lang =
+            document.documentElement.dataset.siteLang === "en" ? "en" : "zh-CN";
+        } catch (error) {
+          document.documentElement.dataset.authTheme = "light";
+          document.documentElement.dataset.siteLang = "zh";
+        }
+      })();
+    </script>
+    <title data-i18n-page-title="page.admin">答题系统 · 后台管理</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./particles.css" />
+    <link rel="modulepreload" href="./vendor/particles.bundle.js" />
+  </head>
+  <body class="admin-body">
+    <div id="particlesBackground" class="particles-container" aria-hidden="true"></div>
+    <header class="admin-topbar">
+      <div>
+        <h1 data-i18n="admin.title">后台管理</h1>
+        <p id="adminSubtitle" data-i18n="admin.subtitleHr">管理面试候选人录入与白名单。</p>
+      </div>
+      <div class="admin-topbar-actions">
+        <button id="langToggle" class="lang-toggle" type="button" aria-label="切换到英文" title="切换到英文">
+          <span class="lang-toggle-label" aria-hidden="true">EN</span>
+        </button>
+        <button id="authThemeToggle" class="theme-toggle" type="button" aria-label="切换到暗色模式" title="切换到暗色模式">
+          <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M13.5 2.1a8.5 8.5 0 1 0 7.4 7.4 6.4 6.4 0 1 1-7.4-7.4Z" />
+          </svg>
+          <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="4.75" fill="currentColor" />
+            <path
+              stroke="currentColor"
+              stroke-width="2.25"
+              stroke-linecap="round"
+              d="M12 3v2.6M12 18.4V21M5.05 5.05l1.84 1.84M17.11 17.11l1.84 1.84M3 12h2.6M18.4 12H21M5.05 18.95l1.84-1.84M17.11 6.89l1.84-1.84"
+            />
+          </svg>
+        </button>
+        <button id="adminLogoutButton" class="logout-icon-button" type="button" data-i18n-aria="exam.logout" data-i18n-title="exam.logout" aria-label="退出登录" title="退出登录">
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+            <path
+              d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <main class="admin-shell">
+      <div id="hrPanel" class="admin-mode-panel is-active">
+      <section class="admin-card admin-card--paired admin-card--add">
+        <h2 data-i18n="admin.addCandidate">新增应聘者</h2>
+        <form id="candidateForm" class="admin-form">
+          <label>
+            <span data-i18n="admin.phone">手机号</span>
+            <input id="candidatePhone" type="tel" inputmode="numeric" maxlength="11" data-i18n-placeholder="admin.placeholder.phone" placeholder="请输入手机号" required />
+          </label>
+          <label>
+            <span data-i18n="admin.role">应聘岗位</span>
+            <select id="candidateJob" required>
+              <option value="大模型工程师" data-i18n="job.llm">大模型工程师</option>
+              <option value="游戏策划师" data-i18n="job.game">游戏策划师</option>
+              <option value="全栈工程师" data-i18n="job.fullstack">全栈工程师</option>
+            </select>
+          </label>
+          <label>
+            <span data-i18n="admin.applyTime">应聘时间</span>
+            <div class="admin-datetime-picker" id="candidateApplyDatePicker">
+              <select id="candidateApplyMonth" class="admin-datetime-select" required data-i18n-aria="admin.month" aria-label="月"></select>
+              <span class="admin-datetime-unit" data-i18n="admin.month">月</span>
+              <select id="candidateApplyDay" class="admin-datetime-select" required data-i18n-aria="admin.day" aria-label="日"></select>
+              <span class="admin-datetime-unit" data-i18n="admin.day">日</span>
+              <select id="candidateApplyHour" class="admin-datetime-select" required data-i18n-aria="admin.hour" aria-label="时"></select>
+              <span class="admin-datetime-unit" data-i18n="admin.hour">时</span>
+            </div>
+          </label>
+          <button type="submit" data-i18n="admin.confirmAdd">确认录入</button>
+        </form>
+        <p id="adminMessage" class="form-message"></p>
+      </section>
+
+      <section class="admin-card admin-card--paired admin-card--list">
+        <div class="table-title">
+          <h2 data-i18n="admin.candidateList">已录入名单</h2>
+          <button id="refreshButton" class="refresh-icon-button" type="button" data-i18n-aria="common.refresh" data-i18n-title="common.refresh" aria-label="刷新" title="刷新">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M4 12a8 8 0 0 1 13.65-5.65M20 4v6h-6M20 12a8 8 0 0 1-13.65 5.65M4 20v-6h6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="admin-note admin-note--compact" data-i18n-html="admin.testPhoneNote">手机号 <strong>123</strong> 是管理员测试号，不需要录入；姓名可任意填写，岗位默认大模型工程师，且可重复交卷。</div>
+        <div class="admin-table-scroll">
+        <table class="admin-table admin-table--candidates">
+          <thead>
+            <tr>
+              <th data-i18n="admin.col.phone">手机号</th>
+              <th data-i18n="admin.col.role">应聘岗位</th>
+              <th data-i18n="admin.col.applyTime">应聘时间</th>
+              <th data-i18n="admin.col.createdAt">录入时间</th>
+              <th data-i18n="admin.col.status">状态</th>
+              <th data-i18n="admin.col.actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="candidateTable"></tbody>
+        </table>
+        </div>
+      </section>
+      </div>
+
+      <div id="techPanel" class="admin-mode-panel">
+      <section class="admin-card submissions-card">
+        <div class="table-title">
+          <h2 data-i18n="admin.submissions">试卷提交记录</h2>
+          <button id="refreshSubmissionsButton" class="refresh-icon-button" type="button" data-i18n-aria="common.refresh" data-i18n-title="common.refresh" aria-label="刷新" title="刷新">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+              <path
+                d="M4 12a8 8 0 0 1 13.65-5.65M20 4v6h-6M20 12a8 8 0 0 1-13.65 5.65M4 20v-6h6"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
+        <p id="techAdminMessage" class="form-message"></p>
+        <div class="admin-table-wrap">
+        <table class="admin-table admin-table--submissions">
+          <thead>
+            <tr>
+              <th data-i18n="admin.col.candidate">候选人</th>
+              <th data-i18n="admin.col.phone">手机号</th>
+              <th data-i18n="admin.col.role">岗位</th>
+              <th data-i18n="admin.col.objective">客观分</th>
+              <th data-i18n="admin.col.code">代码题</th>
+              <th data-i18n="admin.col.total">总分</th>
+              <th data-i18n="admin.col.duration">用时</th>
+              <th data-i18n="admin.col.submittedAt">提交时间</th>
+              <th data-i18n="admin.col.detail">详情</th>
+            </tr>
+          </thead>
+          <tbody id="submissionTable"></tbody>
+        </table>
+        </div>
+      </section>
+
+      <section class="admin-card admin-card--full admin-card--exam" id="examMgmtSection">
+        <div class="admin-collapse-header">
+          <h2 data-i18n="admin.examMgmt">试卷管理</h2>
+          <a class="ghost small-button" href="./admin-pdf-preview.html" target="_blank" rel="noopener" data-i18n="admin.pdfPreview">PDF 样式预览</a>
+        </div>
+        <div id="examMgmtBody" class="admin-collapse-body">
+        <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th data-i18n="admin.col.examJob">岗位</th>
+              <th data-i18n="admin.col.examTitle">当前试卷</th>
+              <th data-i18n="admin.col.examDuration">答题时长</th>
+              <th data-i18n="admin.col.examCount">题量</th>
+              <th data-i18n="admin.col.examUpdated">更新时间</th>
+              <th data-i18n="admin.col.actions">操作</th>
+            </tr>
+          </thead>
+          <tbody id="examSummaryTable"></tbody>
+        </table>
+        </div>
+
+        <h3 class="admin-subtitle" data-i18n="admin.stemEditor">题干编辑</h3>
+        <p class="admin-note" data-i18n="admin.stemEditorNote">选择岗位后可编辑当前生效试卷的题干与选项文案，不会影响标准答案与分值。</p>
+        <div class="admin-form admin-form--stem-toolbar">
+          <label>
+            <span data-i18n="admin.role">应聘岗位</span>
+            <select id="stemEditJob">
+              <option value="大模型工程师" data-i18n="job.llm">大模型工程师</option>
+              <option value="游戏策划师" data-i18n="job.game">游戏策划师</option>
+              <option value="全栈工程师" data-i18n="job.fullstack">全栈工程师</option>
+            </select>
+          </label>
+          <button id="loadStemPaperButton" type="button" data-i18n="admin.loadStemPaper">加载题目</button>
+        </div>
+        <div id="stemEditorLayout" class="stem-editor-layout hidden">
+          <div id="stemQuestionList" class="stem-question-list"></div>
+          <form id="stemEditForm" class="stem-edit-form hidden">
+            <input type="hidden" id="stemEditQuestionId" />
+            <label>
+              <span data-i18n="admin.stemTitle">题干</span>
+              <textarea id="stemEditTitle" rows="4" required></textarea>
+            </label>
+            <label id="stemPromptField" class="hidden">
+              <span data-i18n="admin.stemPrompt">场景描述</span>
+              <textarea id="stemEditPrompt" rows="5"></textarea>
+            </label>
+            <label id="stemOptionsField" class="hidden">
+              <span data-i18n="admin.stemOptions">选项（每行一个）</span>
+              <textarea id="stemEditOptions" rows="6"></textarea>
+            </label>
+            <label id="stemBodyField" class="hidden">
+              <span data-i18n="admin.stemBody">代码题正文（JSON 段落数组）</span>
+              <textarea id="stemEditBody" rows="10"></textarea>
+            </label>
+            <button type="submit" data-i18n="admin.saveStem">保存修改</button>
+          </form>
+        </div>
+
+        <h3 class="admin-subtitle" data-i18n="admin.importExam">导入试卷</h3>
+        <p class="admin-note" data-i18n-html="admin.importNote">
+          支持 Word（.docx）/PDF。请参考<a href="./docs/exam-import-template.md" target="_blank" rel="noopener">导入模板</a>整理。
+        </p>
+        <form id="examImportForm" class="admin-form admin-form--import">
+          <label>
+            <span data-i18n="admin.role">应聘岗位</span>
+            <select id="examImportJob" required>
+              <option value="大模型工程师" data-i18n="job.llm">大模型工程师</option>
+              <option value="游戏策划师" data-i18n="job.game">游戏策划师</option>
+              <option value="全栈工程师" data-i18n="job.fullstack">全栈工程师</option>
+            </select>
+          </label>
+          <label>
+            <span data-i18n="admin.importDuration">答题时长（分钟）</span>
+            <input id="examImportDuration" type="number" min="10" max="180" value="40" required />
+          </label>
+          <label>
+            <span data-i18n="admin.importTitleOptional">试卷标题（可选）</span>
+            <input id="examImportTitle" type="text" data-i18n-placeholder="admin.importTitlePlaceholder" placeholder="留空则使用文档内标题" />
+          </label>
+          <label>
+            <span data-i18n="admin.importFile">试卷文件</span>
+            <input id="examImportFile" type="file" accept=".docx,.pdf,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+          </label>
+          <button type="submit" data-i18n="admin.parseExam">解析试卷</button>
+        </form>
+        <div id="examImportPreview" class="import-preview hidden"></div>
+        <div class="import-publish-actions">
+          <button id="publishExamButton" type="button" disabled data-i18n="admin.publishExam">发布为当前岗位试卷</button>
+        </div>
+        </div>
+        </div>
+      </section>
+      </div>
+    </main>
+
+    <div id="submissionDetailOverlay" class="submission-detail-overlay hidden" aria-hidden="true">
+      <div class="submission-detail-backdrop" data-close-submission-detail></div>
+      <div class="submission-detail-panel" role="dialog" aria-modal="true" aria-labelledby="submissionDetailTitle">
+        <button type="button" class="submission-detail-close" data-close-submission-detail data-i18n-aria="admin.closeDetail" aria-label="关闭">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+          </svg>
+        </button>
+        <div id="submissionDetail" class="submission-detail"></div>
+      </div>
+    </div>
+    <script type="module" src="./particles-init.js"></script>
+    <script src="./i18n.js"></script>
+    <script src="./theme.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>

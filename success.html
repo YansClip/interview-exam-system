@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN" data-auth-theme="light" data-site-lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        try {
+          document.documentElement.dataset.authTheme =
+            localStorage.getItem("exam_system_theme") === "dark" ? "dark" : "light";
+          document.documentElement.dataset.siteLang =
+            localStorage.getItem("exam_system_lang") === "en" ? "en" : "zh";
+          document.documentElement.lang =
+            document.documentElement.dataset.siteLang === "en" ? "en" : "zh-CN";
+        } catch (error) {
+          document.documentElement.dataset.authTheme = "light";
+          document.documentElement.dataset.siteLang = "zh";
+        }
+      })();
+    </script>
+    <title data-i18n-page-title="page.success">提交成功</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body class="success-body">
+    <header class="success-header">
+      <button id="langToggle" class="lang-toggle" type="button" aria-label="切换到英文" title="切换到英文">
+        <span class="lang-toggle-label" aria-hidden="true">EN</span>
+      </button>
+      <button id="authThemeToggle" class="theme-toggle" type="button" aria-label="切换到暗色模式" title="切换到暗色模式">
+        <svg class="theme-icon theme-icon--moon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="currentColor" d="M13.5 2.1a8.5 8.5 0 1 0 7.4 7.4 6.4 6.4 0 1 1-7.4-7.4Z" />
+        </svg>
+        <svg class="theme-icon theme-icon--sun" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <circle cx="12" cy="12" r="4.75" fill="currentColor" />
+          <path
+            stroke="currentColor"
+            stroke-width="2.25"
+            stroke-linecap="round"
+            d="M12 3v2.6M12 18.4V21M5.05 5.05l1.84 1.84M17.11 17.11l1.84 1.84M3 12h2.6M18.4 12H21M5.05 18.95l1.84-1.84M17.11 6.89l1.84-1.84"
+          />
+        </svg>
+      </button>
+    </header>
+    <main class="success-page">
+      <section class="success-card">
+        <div class="success-icon">✓</div>
+        <h1 data-i18n="success.title">提交成功</h1>
+      </section>
+    </main>
+    <script>
+      (function () {
+        if (sessionStorage.getItem("exam_system_submitted") !== "1") {
+          window.location.replace("./login.html");
+          return;
+        }
+        sessionStorage.removeItem("exam_system_submitted");
+        history.replaceState(null, "", window.location.href);
+      })();
+    </script>
+    <script src="./i18n.js"></script>
+    <script src="./theme.js"></script>
+  </body>
+</html>
